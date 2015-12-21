@@ -3,7 +3,7 @@
     Configuration Editor
     <span class="pull-right">
         <button id="save-xdt" class="btn btn-success">Save XDT</button>
-        <button id="restart-site" class="btn btn-danger">Restart Site</button>
+        <button id="restart-site" class="btn btn-danger" data-loading-text="Restarting...">Restart Site</button>
     </span>
 </h3>
 
@@ -11,8 +11,8 @@
 
 <div>
     <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">applicationHost.config</a></li>
-        <li role="presentation"><a href="#xdt" aria-controls="xdt" role="tab" data-toggle="tab">applicationHost.xdt</a></li>
+        <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">applicationHost.config (edit)</a></li>
+        <li role="presentation"><a href="#xdt" aria-controls="xdt" role="tab" data-toggle="tab">applicationHost.xdt (readonly)</a></li>
     </ul>
 
     <div class="tab-content">
@@ -77,7 +77,9 @@
                 data: { newConfig: mainEditor.getValue() }
             }).done(function (result) {
                 xdtEditor.setValue(result, -1);
-            });
+            }).fail(function () {
+                alert("error");
+            });;
         });
 
         $("#save-xdt").click(function () {
@@ -86,15 +88,23 @@
                 url: "@Url.RouteUrl("DefaultApi", new { httproute = "", controller = "Xdt" })",
                 dataType: "text",
                 data: { newConfig: mainEditor.getValue() }
+            }).fail(function() {
+                alert("error");
             });
         });
 
         $("#restart-site").click(function () {
+            var $button = $(this);
+
+            $button.button("loading");
+
             $.ajax({
                 type: "DELETE",
                 url: "/api/processes/0"
             }).always(function() {
-                setTimeout(function() {
+                setTimeout(function () {
+                    $button.button("reset");
+
                     location.reload(true);
                 }, 5000);
             });
