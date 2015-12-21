@@ -1,12 +1,103 @@
 ﻿
-@{
-    ViewBag.Title = "Index";
+<h3>
+    Configuration Editor
+    <span class="pull-right">
+        <button id="save-xdt" class="btn btn-success">Save XDT</button>
+        <button id="restart-site" class="btn btn-danger">Restart Site</button>
+    </span>
+</h3>
+
+<hr />
+
+<div>
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#main" aria-controls="main" role="tab" data-toggle="tab">applicationHost.config</a></li>
+        <li role="presentation"><a href="#xdt" aria-controls="xdt" role="tab" data-toggle="tab">applicationHost.xdt</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="main">
+            <div id="main-editor" style="height: 600px;"></div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="xdt">
+            <div id="xdt-editor" style="height: 600px;"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.2/ace.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.2/ext-language_tools.js"></script>
+    <script>
+        function setDefaultConfig(editor) {
+            editor.$blockScrolling = Infinity;
+
+            editor.setTheme("ace/theme/sqlserver");
+            editor.setShowPrintMargin(false);
+
+            editor.setOptions({
+                enableBasicAutocompletion: true,
+                enableSnippets: true,
+                enableLiveAutocompletion: true
+            });
+
+            editor.getSession().setMode("ace/mode/xml");
+            editor.getSession().setUseWrapMode(true);
+            editor.getSession().setTabSize(2);
+        }
+
+        var mainEditor = ace.edit("main-editor");
+
+        setDefaultConfig(mainEditor);
+
+        var xdtEditor = ace.edit("xdt-editor");
+
+        setDefaultConfig(xdtEditor);
+
+        xdtEditor.setReadOnly(true);
+
+        $.ajax({
+            type: "GET",
+            url: "@Url.RouteUrl("DefaultApi", new { httproute = "", controller = "AppHost" })",
+            dataType: "text"
+        }).done(function (result) {
+            mainEditor.setValue(result, -1);
+        });
+
+        $("a[data-toggle='tab']").on("shown.bs.tab", function (e) {
+            if (e.target.href.indexOf("#xdt") === -1) {
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.RouteUrl("DefaultApi", new { httproute = "", controller = "Preview" })",
+                dataType: "text",
+                data: { newConfig: mainEditor.getValue() }
+            }).done(function (result) {
+                xdtEditor.setValue(result, -1);
+            });
+        });
+
+        $("#save-xdt").click(function () {
+            $.ajax({
+                type: "POST",
+                url: "@Url.RouteUrl("DefaultApi", new { httproute = "", controller = "Xdt" })",
+                dataType: "text",
+                data: { newConfig: mainEditor.getValue() }
+            });
+        });
+
+        $("#restart-site").click(function () {
+            $.ajax({
+                type: "DELETE",
+                url: "/api/processes/0"
+            }).always(function() {
+                setTimeout(function() {
+                    location.reload(true);
+                }, 5000);
+            });
+        });
+    </script>
 }
-
-<h2>Index</h2>
-
-<div id="editor" style="height: 600px"></div>
-<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
-<script>
-    ace.edit("editor");
-</script>
