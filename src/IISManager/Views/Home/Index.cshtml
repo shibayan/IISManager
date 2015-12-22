@@ -2,7 +2,7 @@
 <h3>
     Configuration Editor
     <span class="pull-right">
-        <button id="save-xdt" class="btn btn-success">Save XDT</button>
+        <button id="save-xdt" class="btn btn-success" data-loading-text="Saving...">Save XDT</button>
         <button id="restart-site" class="btn btn-danger" data-loading-text="Restarting...">Restart Site</button>
     </span>
 </h3>
@@ -83,6 +83,10 @@
         });
 
         $("#save-xdt").click(function () {
+            var $button = $(this);
+
+            $button.button("loading");
+
             $.ajax({
                 type: "POST",
                 url: "@Url.RouteUrl("DefaultApi", new { httproute = "", controller = "Xdt" })",
@@ -90,6 +94,8 @@
                 data: { newConfig: mainEditor.getValue() }
             }).fail(function() {
                 alert("error");
+            }).always(function() {
+                $button.button("reset");
             });
         });
 
