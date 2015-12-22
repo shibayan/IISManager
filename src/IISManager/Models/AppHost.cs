@@ -5,31 +5,41 @@ using System.Xml;
 using FatAntelope;
 using FatAntelope.Writers;
 
+using Microsoft.Web.XmlTransform;
+
 namespace IISManager.Models
 {
     public class AppHost
     {
         public static string GetCurrentConfig()
         {
-            var appPoolConfig = Environment.GetEnvironmentVariable("APP_POOL_CONFIG");
+            var baseConfig = GetBaseConfig();
+            
+            // Apply D:\home\site\applicationHost.xdt
+            var source = new XmlTransformableDocument();
 
-            if (appPoolConfig == null)
-            {
-                return File.ReadAllText(@"C:\Users\shibayan\Documents\IISExpress\config\applicationhost.config");
-            }
+            source.LoadXml(baseConfig);
 
-            return File.ReadAllText(appPoolConfig);
+            var transform = ReadXmlTransformation(Environment.ExpandEnvironmentVariables(@"%HOME%\site\applicationHost.xdt"));
+            
+            transform?.Apply(source);
+
+            return source.ToFormattedString();
         }
-
-        public static void SaveAppHostXdt(string xdt)
+        
+        public static void ApplyConfig(string newConfig)
         {
+            var xdt = GenerateXdt(newConfig);
+
             var appHostXdt = Environment.ExpandEnvironmentVariables(@"%HOME%\site\applicationHost.xdt");
 
             File.WriteAllText(appHostXdt, xdt);
         }
 
-        public static string GenerateXdt(string baseConfig, string newConfig)
+        public static string GenerateXdt(string newConfig)
         {
+            var baseConfig = GetBaseConfig();
+
             if (string.IsNullOrEmpty(baseConfig) || string.IsNullOrEmpty(newConfig))
             {
                 return "";
@@ -39,16 +49,54 @@ namespace IISManager.Models
             var newTree = BuildTree(newConfig);
 
             XDiff.Diff(baseTree, newTree);
-
-            var writer = new XdtDiffWriter();
-
-            var patch = writer.GetDiff(newTree);
             
-            var textWriter = new StringWriter();
+            var patch = new XdtDiffWriter().GetDiff(newTree);
 
-            patch.Save(textWriter);
+            return patch.ToFormattedString();
+        }
 
-            return textWriter.ToString();
+        private static string GetBaseConfig()
+        {
+            var appPoolConfig = Environment.GetEnvironmentVariable("APP_POOL_CONFIG");
+
+            if (appPoolConfig == null)
+            {
+                return "";
+            }
+
+            var source = new XmlTransformableDocument();
+
+            source.Load(appPoolConfig + ".base");
+
+            // Apply site extensions
+            var siteExtensions = Environment.ExpandEnvironmentVariables(@"%HOME%\SiteExtensions");
+
+            foreach (var directory in Directory.GetDirectories(siteExtensions))
+            {
+                var transform = ReadXmlTransformation(Path.Combine(directory, "applicationHost.xdt"));
+
+                transform?.Apply(source);
+            }
+
+            return source.ToFormattedString();
+        }
+
+        private static XmlTransformation ReadXmlTransformation(string xdtPath)
+        {
+            if (!File.Exists(xdtPath))
+            {
+                return null;
+            }
+
+            var xdtContent = File.ReadAllText(xdtPath);
+
+            xdtContent = xdtContent.Replace("%XDT_SITENAME%", Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME"));
+            xdtContent = xdtContent.Replace("%XDT_SCMSITENAME%", Environment.GetEnvironmentVariable("WEBSITE_IIS_SITE_NAME"));
+            xdtContent = xdtContent.Replace("%XDT_APPPOOLNAME%", Environment.GetEnvironmentVariable("APP_POOL_ID"));
+            xdtContent = xdtContent.Replace("%XDT_EXTENSIONPATH%", Path.GetDirectoryName(xdtPath));
+            xdtContent = xdtContent.Replace("%HOME%", Environment.GetEnvironmentVariable("HOME"));
+
+            return new XmlTransformation(xdtContent, false, null);
         }
 
         private static XTree BuildTree(string xml)

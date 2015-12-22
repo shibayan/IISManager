@@ -10,7 +10,7 @@ namespace IISManager.Controllers
     {
         public HttpResponseMessage Post([FromBody]ConfigPostModel model)
         {
-            var xdt = AppHost.GenerateXdt(AppHost.GetCurrentConfig(), model.NewConfig);
+            var xdt = AppHost.GenerateXdt(model.NewConfig);
 
             return new HttpResponseMessage(System.Net.HttpStatusCode.OK)
             {

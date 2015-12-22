@@ -10,11 +10,11 @@ namespace IISManager.Controllers
     {
         public HttpResponseMessage Get()
         {
-            var appHost = AppHost.GetCurrentConfig();
+            var currentConfig = AppHost.GetCurrentConfig();
 
             return new HttpResponseMessage(System.Net.HttpStatusCode.OK)
             {
-                Content = new StringContent(appHost, Encoding.UTF8, "text/plain")
+                Content = new StringContent(currentConfig, Encoding.UTF8, "text/plain")
             };
         }
     }

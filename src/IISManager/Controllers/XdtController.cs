@@ -8,9 +8,7 @@ namespace IISManager.Controllers
     {
         public IHttpActionResult Post([FromBody]ConfigPostModel model)
         {
-            var xdt = AppHost.GenerateXdt(AppHost.GetCurrentConfig(), model.NewConfig);
-
-            AppHost.SaveAppHostXdt(xdt);
+            AppHost.ApplyConfig(model.NewConfig);
 
             return Ok();
         }
