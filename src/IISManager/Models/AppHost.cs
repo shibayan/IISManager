@@ -11,6 +11,9 @@ namespace IISManager.Models
 {
     public class AppHost
     {
+        // Default XDT Path
+        private static readonly string _xdtPath = Environment.ExpandEnvironmentVariables(@"%HOME%\site\applicationHost.xdt");
+
         public static string GetCurrentConfig()
         {
             var baseConfig = GetBaseConfig();
@@ -20,20 +23,21 @@ namespace IISManager.Models
 
             source.LoadXml(baseConfig);
 
-            var transform = ReadXmlTransformation(Environment.ExpandEnvironmentVariables(@"%HOME%\site\applicationHost.xdt"));
+            var transform = CreateXmlTransformation(_xdtPath);
             
             transform?.Apply(source);
 
             return source.ToFormattedString();
         }
-        
-        public static void ApplyConfig(string newConfig)
+
+        public static string GetCurrentXdt()
         {
-            var xdt = GenerateXdt(newConfig);
+            if (!File.Exists(_xdtPath))
+            {
+                return "";
+            }
 
-            var appHostXdt = Environment.ExpandEnvironmentVariables(@"%HOME%\site\applicationHost.xdt");
-
-            File.WriteAllText(appHostXdt, xdt);
+            return File.ReadAllText(_xdtPath);
         }
 
         public static string GenerateXdt(string newConfig)
@@ -55,6 +59,34 @@ namespace IISManager.Models
             return patch.ToFormattedString();
         }
 
+        public static string GenerateConfig(string newXdt)
+        {
+            var baseConfig = GetBaseConfig();
+
+            var source = new XmlTransformableDocument();
+
+            source.LoadXml(baseConfig);
+
+            // force default XDT path
+            var transform = CreateXmlTransformation(_xdtPath, newXdt);
+
+            transform.Apply(source);
+
+            return source.ToFormattedString();
+        }
+
+        public static void SaveFromConfig(string newConfig)
+        {
+            var xdt = GenerateXdt(newConfig);
+
+            File.WriteAllText(_xdtPath, xdt);
+        }
+
+        public static void SaveFromXdt(string newXdt)
+        {
+            File.WriteAllText(_xdtPath, newXdt);
+        }
+
         private static string GetBaseConfig()
         {
             var appPoolConfig = Environment.GetEnvironmentVariable("APP_POOL_CONFIG");
@@ -73,7 +105,7 @@ namespace IISManager.Models
 
             foreach (var directory in Directory.GetDirectories(siteExtensions))
             {
-                var transform = ReadXmlTransformation(Path.Combine(directory, "applicationHost.xdt"));
+                var transform = CreateXmlTransformation(Path.Combine(directory, "applicationHost.xdt"));
 
                 transform?.Apply(source);
             }
@@ -81,7 +113,7 @@ namespace IISManager.Models
             return source.ToFormattedString();
         }
 
-        private static XmlTransformation ReadXmlTransformation(string xdtPath)
+        private static XmlTransformation CreateXmlTransformation(string xdtPath)
         {
             if (!File.Exists(xdtPath))
             {
@@ -90,6 +122,11 @@ namespace IISManager.Models
 
             var xdtContent = File.ReadAllText(xdtPath);
 
+            return CreateXmlTransformation(xdtPath, xdtContent);
+        }
+
+        private static XmlTransformation CreateXmlTransformation(string xdtPath, string xdtContent)
+        {
             xdtContent = xdtContent.Replace("%XDT_SITENAME%", Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME"));
             xdtContent = xdtContent.Replace("%XDT_SCMSITENAME%", Environment.GetEnvironmentVariable("WEBSITE_IIS_SITE_NAME"));
             xdtContent = xdtContent.Replace("%XDT_APPPOOLNAME%", Environment.GetEnvironmentVariable("APP_POOL_ID"));
