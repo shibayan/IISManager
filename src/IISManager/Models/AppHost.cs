@@ -127,8 +127,15 @@ namespace IISManager.Models
 
         private static XmlTransformation CreateXmlTransformation(string xdtPath, string xdtContent)
         {
-            xdtContent = xdtContent.Replace("%XDT_SITENAME%", Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME"));
-            xdtContent = xdtContent.Replace("%XDT_SCMSITENAME%", Environment.GetEnvironmentVariable("WEBSITE_IIS_SITE_NAME"));
+            // Looks like ~1mysite__cb96 (the __cb96 syntax occurs when using slots)
+            string scmSiteName = Environment.GetEnvironmentVariable("WEBSITE_IIS_SITE_NAME");
+
+            // Remove the ~1 prefix to get the main site name, e.g. mysite__cb96
+            // Note that %WEBSITE_SITE_NAME% is not correct is it would be just mysite, without the __cb96 suffix
+            string mainSiteName = scmSiteName.Substring(2);
+
+            xdtContent = xdtContent.Replace("%XDT_SITENAME%", mainSiteName);
+            xdtContent = xdtContent.Replace("%XDT_SCMSITENAME%", scmSiteName);
             xdtContent = xdtContent.Replace("%XDT_APPPOOLNAME%", Environment.GetEnvironmentVariable("APP_POOL_ID"));
             xdtContent = xdtContent.Replace("%XDT_EXTENSIONPATH%", Path.GetDirectoryName(xdtPath));
             xdtContent = xdtContent.Replace("%HOME%", Environment.GetEnvironmentVariable("HOME"));
