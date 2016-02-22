@@ -27,8 +27,8 @@
 
 @section Scripts
 {
-    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.2/ace.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.2/ext-language_tools.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ext-language_tools.js"></script>
     <script>
         function getAceEditor(id) {
             var editor = ace.edit(id);
@@ -106,7 +106,7 @@
                 });
             };
 
-            self.saveXdt = function (data, event) {
+            self.saveXdt = function (d, event) {
                 var $button = $(event.target);
 
                 $button.button("loading");
@@ -126,7 +126,7 @@
                 });
             };
 
-            self.restartSite = function (data, event) {
+            self.restartSite = function (d, event) {
                 var $button = $(event.target);
 
                 $button.button("loading");
