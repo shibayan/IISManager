@@ -13,6 +13,13 @@
     <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active"><a href="#config" aria-controls="config" role="tab" data-toggle="tab">applicationHost.config</a></li>
         <li role="presentation"><a href="#xdt" aria-controls="xdt" role="tab" data-toggle="tab">applicationHost.xdt</a></li>
+        <li class="pull-right">
+            <form class="form-inline">
+                <select class="form-control" data-bind="options: templates, optionsText: 'Name', value: selectedTemplate, optionsCaption: 'Choose Template...'">
+                </select>
+                <button class="btn btn-default" data-bind="click: loadTemplate">Load</button>
+            </form>
+        </li>
     </ul>
 
     <div class="tab-content">
@@ -62,8 +69,16 @@
 
             var isConfigTab = true;
 
+            self.templates = ko.observableArray([]);
+            self.selectedTemplate = ko.observable();
+
+            self.loadTemplate = function () {
+                $('a[href="#xdt"]').tab('show');
+                xdtEditor.setValue(self.selectedTemplate().Content, -1);
+            };
+
             // xdt -> config
-            self.shownConfigTab = function () {
+            self.shownConfigTab = function() {
                 var newXdt = xdtEditor.getValue();
 
                 if (xdtSnapshot === newXdt) {
@@ -75,17 +90,17 @@
                     url: "@Url.Content("~/api/xdt/preview")",
                     dataType: "text",
                     data: { newXdt: newXdt }
-                }).done(function (result) {
+                }).done(function(result) {
                     xdtSnapshot = newXdt;
                     configSnapshot = result;
                     configEditor.setValue(result, -1);
-                }).fail(function () {
+                }).fail(function() {
                     alert("error");
                 });
             };
 
             // config -> xdt
-            self.shownXdtTab = function () {
+            self.shownXdtTab = function() {
                 var newConfig = configEditor.getValue();
 
                 if (configSnapshot === newConfig) {
@@ -97,16 +112,16 @@
                     url: "@Url.Content("~/api/config/preview")",
                     dataType: "text",
                     data: { newConfig: newConfig }
-                }).done(function (result) {
+                }).done(function(result) {
                     configSnapshot = newConfig;
                     xdtSnapshot = result;
                     xdtEditor.setValue(result, -1);
-                }).fail(function () {
+                }).fail(function() {
                     alert("error");
                 });
             };
 
-            self.saveXdt = function (d, event) {
+            self.saveXdt = function(d, event) {
                 var $button = $(event.target);
 
                 $button.button("loading");
@@ -119,14 +134,14 @@
                     url: url,
                     dataType: "text",
                     data: data
-                }).fail(function () {
+                }).fail(function() {
                     alert("error");
-                }).always(function () {
+                }).always(function() {
                     $button.button("reset");
                 });
             };
 
-            self.restartSite = function (d, event) {
+            self.restartSite = function(d, event) {
                 var $button = $(event.target);
 
                 $button.button("loading");
@@ -134,8 +149,8 @@
                 $.ajax({
                     type: "DELETE",
                     url: "/api/processes/0"
-                }).always(function () {
-                    setTimeout(function () {
+                }).always(function() {
+                    setTimeout(function() {
                         $button.button("reset");
 
                         location.reload(true);
@@ -144,7 +159,7 @@
             };
 
 
-            $("a[data-toggle='tab']").on("shown.bs.tab", function (e) {
+            $("a[data-toggle='tab']").on("shown.bs.tab", function(e) {
                 if (e.target.href.indexOf("#xdt") !== -1) {
                     isConfigTab = false;
                     self.shownXdtTab();
@@ -159,7 +174,7 @@
                 type: "GET",
                 url: "@Url.Content("~/api/config")",
                 dataType: "text"
-            }).done(function (result) {
+            }).done(function(result) {
                 configSnapshot = result;
                 configEditor.setValue(result, -1);
             });
@@ -168,9 +183,17 @@
                 type: "GET",
                 url: "@Url.Content("~/api/xdt")",
                 dataType: "text"
-            }).done(function (result) {
+            }).done(function(result) {
                 xdtSnapshot = result;
                 xdtEditor.setValue(result, -1);
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "@Url.Content("~/api/template")",
+                dataType: "json"
+            }).done(function (result) {
+                self.templates(result);
             });
         }
 

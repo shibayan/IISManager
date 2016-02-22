@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Web;
 using System.Xml;
 
 using FatAntelope;
@@ -86,6 +89,15 @@ namespace IISManager.Models
         {
             File.WriteAllText(_xdtPath, newXdt);
         }
+
+        public static List<TemplateModel> GetTemplates()
+        {
+            return Directory.GetFiles(HttpContext.Current.Server.MapPath("~/App_Data"), "*.xdt").Select(x => new TemplateModel
+            {
+                Name = Path.GetFileName(x),
+                Content = File.ReadAllText(x)
+            }).ToList();
+        } 
 
         private static string GetBaseConfig()
         {
