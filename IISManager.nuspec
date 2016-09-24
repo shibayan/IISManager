@@ -3,12 +3,12 @@
     <metadata>
         <id>IISManager</id>
         <title>IIS Manager</title>
-        <version>1.0.5</version>
+        <version>1.0.6</version>
         <authors>shibayan</authors>
         <licenseUrl>https://github.com/shibayan/IISManager/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/shibayan/IISManager</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>IIS Manager for Azure Web Apps</description>
+        <description>IIS Manager Extension for Azure Web Apps</description>
         <tags>iis</tags>
     </metadata>
     <files>
