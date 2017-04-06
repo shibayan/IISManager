@@ -8,4 +8,6 @@ msbuild.exe IISManager\IISManager.csproj /t:pipelinePreDeployCopyAllFilesToOneFo
 
 popd
 
+mkdir artifacts
+
 .\tools\nuget pack .\IISManager.nuspec -BasePath .\build -OutputDirectory .\artifacts
