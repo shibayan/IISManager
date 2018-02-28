@@ -1,7 +1,7 @@
 ﻿
 <h3>
     Configuration Editor
-    <span class="pull-right">
+    <span class="float-right">
         <button class="btn btn-success" data-loading-text="Saving..." data-bind="click: saveXdt">Save XDT</button>
         <button class="btn btn-danger" data-loading-text="Restarting..." data-bind="click: restartSite">Restart Site</button>
     </span>
@@ -11,13 +11,17 @@
 
 <div>
     <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#config" aria-controls="config" role="tab" data-toggle="tab">applicationHost.config</a></li>
-        <li role="presentation"><a href="#xdt" aria-controls="xdt" role="tab" data-toggle="tab">applicationHost.xdt</a></li>
-        <li class="pull-right">
+        <li role="presentation" class="nav-item">
+            <a class="nav-link active" href="#config" aria-controls="config" role="tab" data-toggle="tab">applicationHost.config</a>
+        </li>
+        <li role="presentation" class="nav-item">
+            <a class="nav-link" href="#xdt" aria-controls="xdt" role="tab" data-toggle="tab">applicationHost.xdt</a>
+        </li>
+        <li class="float-right">
             <form class="form-inline">
                 <select class="form-control" data-bind="options: templates, optionsText: 'Name', value: selectedTemplate, optionsCaption: 'Choose Template...'">
                 </select>
-                <button class="btn btn-default" data-bind="click: loadTemplate">Load</button>
+                <button class="btn" data-bind="click: loadTemplate">Load</button>
             </form>
         </li>
     </ul>
@@ -34,8 +38,8 @@
 
 @section Scripts
 {
-    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.3.1/ace.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.3.1/ext-language_tools.js"></script>
     <script>
         function getAceEditor(id) {
             var editor = ace.edit(id);
