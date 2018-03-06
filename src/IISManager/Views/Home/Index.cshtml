@@ -10,19 +10,19 @@
 <hr />
 
 <div>
+    <div class="float-right">
+        <form class="form-inline">
+            <select class="form-control" data-bind="options: templates, optionsText: 'Name', value: selectedTemplate, optionsCaption: 'Choose Template...'"></select>
+            <button class="btn" data-bind="click: loadTemplate">Load</button>
+        </form>
+    </div>
+
     <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="nav-item">
             <a class="nav-link active" href="#config" aria-controls="config" role="tab" data-toggle="tab">applicationHost.config</a>
         </li>
         <li role="presentation" class="nav-item">
             <a class="nav-link" href="#xdt" aria-controls="xdt" role="tab" data-toggle="tab">applicationHost.xdt</a>
-        </li>
-        <li class="float-right">
-            <form class="form-inline">
-                <select class="form-control" data-bind="options: templates, optionsText: 'Name', value: selectedTemplate, optionsCaption: 'Choose Template...'">
-                </select>
-                <button class="btn" data-bind="click: loadTemplate">Load</button>
-            </form>
         </li>
     </ul>
 
