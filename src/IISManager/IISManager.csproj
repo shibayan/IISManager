@@ -114,6 +114,7 @@
     <Content Include="App_Data\default.xdt" />
     <Content Include="App_Data\additional-mimemap.xdt" />
     <Content Include="App_Data\add-environment-variable.xdt" />
+    <Content Include="App_Data\set-queue-length.xdt" />
     <None Include="Properties\PublishProfiles\development.pubxml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -143,6 +144,7 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -2,48 +2,48 @@
 <configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
   <system.webServer>
     <staticContent>
-      <mimeMap fileExtension=".3g2" mimeType="video/3gpp2" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".3gp2" mimeType="video/3gpp2" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".3gp" mimeType="video/3gpp" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".3gpp" mimeType="video/3gpp" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".aac" mimeType="audio/aac" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".adt" mimeType="audio/vnd.dlna.adts" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".adts" mimeType="audio/vnd.dlna.adts" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".appcache" mimeType="text/cache-manifest" xdt:Transform="Insert" />
+      <mimeMap fileExtension=".3g2" mimeType="video/3gpp2" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".3gp2" mimeType="video/3gpp2" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".3gp" mimeType="video/3gpp" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".3gpp" mimeType="video/3gpp" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".aac" mimeType="audio/aac" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".adt" mimeType="audio/vnd.dlna.adts" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".adts" mimeType="audio/vnd.dlna.adts" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".appcache" mimeType="text/cache-manifest" xdt:Transform="InsertIfMissing" />
       <mimeMap fileExtension=".avi" xdt:Locator="Match(fileExtension)" xdt:Transform="Remove" />
-      <mimeMap fileExtension=".avi" mimeType="video/avi" xdt:Transform="Insert" />
+      <mimeMap fileExtension=".avi" mimeType="video/avi" xdt:Transform="InsertIfMissing" />
       <mimeMap fileExtension=".cab" xdt:Locator="Match(fileExtension)" xdt:Transform="Remove" />
-      <mimeMap fileExtension=".cab" mimeType="application/vnd.ms-cab-compressed" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".dvr-ms" mimeType="video/x-ms-dvr" xdt:Transform="Insert" />
+      <mimeMap fileExtension=".cab" mimeType="application/vnd.ms-cab-compressed" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".dvr-ms" mimeType="video/x-ms-dvr" xdt:Transform="InsertIfMissing" />
       <mimeMap fileExtension=".eot" xdt:Locator="Match(fileExtension)" xdt:Transform="Remove" />
-      <mimeMap fileExtension=".eot" mimeType="application/vnd.ms-fontobject" xdt:Transform="Insert" />
+      <mimeMap fileExtension=".eot" mimeType="application/vnd.ms-fontobject" xdt:Transform="InsertIfMissing" />
       <mimeMap fileExtension=".ics" xdt:Locator="Match(fileExtension)" xdt:Transform="Remove" />
-      <mimeMap fileExtension=".ics" mimeType="text/calendar" xdt:Transform="Insert" />
+      <mimeMap fileExtension=".ics" mimeType="text/calendar" xdt:Transform="InsertIfMissing" />
       <mimeMap fileExtension=".js" xdt:Locator="Match(fileExtension)" xdt:Transform="Remove" />
-      <mimeMap fileExtension=".js" mimeType="application/javascript" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".json" mimeType="application/json" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".jsonld" mimeType="application/ld+json" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".less" mimeType="text/css" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".m2ts" mimeType="video/vnd.dlna.mpeg-tts" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".m4a" mimeType="audio/mp4" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".m4v" mimeType="video/mp4" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".mp4" mimeType="video/mp4" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".mp4v" mimeType="video/mp4" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".oga" mimeType="audio/ogg" xdt:Transform="Insert" />
+      <mimeMap fileExtension=".js" mimeType="application/javascript" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".json" mimeType="application/json" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".jsonld" mimeType="application/ld+json" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".less" mimeType="text/css" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".m2ts" mimeType="video/vnd.dlna.mpeg-tts" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".m4a" mimeType="audio/mp4" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".m4v" mimeType="video/mp4" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".mp4" mimeType="video/mp4" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".mp4v" mimeType="video/mp4" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".oga" mimeType="audio/ogg" xdt:Transform="InsertIfMissing" />
       <mimeMap fileExtension=".ogg" xdt:Locator="Match(fileExtension)" xdt:Transform="Remove" />
-      <mimeMap fileExtension=".ogg" mimeType="video/ogg" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".ogv" mimeType="video/ogg" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".otf" mimeType="font/otf" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".spx" mimeType="audio/ogg" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".svgz" mimeType="image/svg+xml" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".ts" mimeType="video/vnd.dlna.mpeg-tts" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".tts" mimeType="video/vnd.dlna.mpeg-tts" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".webm" mimeType="video/webm" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".woff" mimeType="font/x-woff" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".woff2" mimeType="application/font-woff2" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".wtv" mimeType="video/x-ms-wtv" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".xht" mimeType="application/xhtml+xml" xdt:Transform="Insert" />
-      <mimeMap fileExtension=".xhtml" mimeType="application/xhtml+xml" xdt:Transform="Insert" />
+      <mimeMap fileExtension=".ogg" mimeType="video/ogg" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".ogv" mimeType="video/ogg" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".otf" mimeType="font/otf" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".spx" mimeType="audio/ogg" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".svgz" mimeType="image/svg+xml" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".ts" mimeType="video/vnd.dlna.mpeg-tts" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".tts" mimeType="video/vnd.dlna.mpeg-tts" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".webm" mimeType="video/webm" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".woff" mimeType="font/x-woff" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".woff2" mimeType="application/font-woff2" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".wtv" mimeType="video/x-ms-wtv" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".xht" mimeType="application/xhtml+xml" xdt:Transform="InsertIfMissing" />
+      <mimeMap fileExtension=".xhtml" mimeType="application/xhtml+xml" xdt:Transform="InsertIfMissing" />
     </staticContent>
   </system.webServer>
 </configuration>

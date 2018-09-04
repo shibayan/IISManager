@@ -12,6 +12,11 @@ namespace IISManager
 
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+
+            ViewEngines.Engines.Clear();
+            ViewEngines.Engines.Add(new RazorViewEngine());
+
+            MvcHandler.DisableMvcResponseHeader = true;
         }
     }
 }
