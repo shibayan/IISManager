@@ -87,7 +87,17 @@ namespace IISManager.Models
 
         public static void SaveFromXdt(string newXdt)
         {
-            File.WriteAllText(_xdtPath, newXdt);
+            if (string.IsNullOrEmpty(newXdt))
+            {
+                if (File.Exists(_xdtPath))
+                {
+                    File.Delete(_xdtPath);
+                }
+            }
+            else
+            {
+                File.WriteAllText(_xdtPath, newXdt);
+            }
         }
 
         public static List<TemplateModel> GetTemplates()
