@@ -20,14 +20,14 @@ namespace IISManager.Models
         public static string GetCurrentConfig()
         {
             var baseConfig = GetBaseConfig();
-            
+
             // Apply D:\home\site\applicationHost.xdt
             var source = new XmlTransformableDocument();
 
             source.LoadXml(baseConfig);
 
             var transform = CreateXmlTransformation(_xdtPath);
-            
+
             transform?.Apply(source);
 
             return source.ToFormattedString();
@@ -56,7 +56,7 @@ namespace IISManager.Models
             var newTree = BuildTree(newConfig);
 
             XDiff.Diff(baseTree, newTree);
-            
+
             var patch = new XdtDiffWriter().GetDiff(newTree);
 
             return patch.ToFormattedString();
@@ -97,7 +97,7 @@ namespace IISManager.Models
                 Name = Path.GetFileName(x),
                 Content = File.ReadAllText(x)
             }).ToList();
-        } 
+        }
 
         private static string GetBaseConfig()
         {
@@ -117,9 +117,13 @@ namespace IISManager.Models
 
             foreach (var directory in Directory.GetDirectories(siteExtensions))
             {
-                var transform = CreateXmlTransformation(Path.Combine(directory, "applicationHost.xdt"));
+                var transformMain = CreateXmlTransformation(Path.Combine(directory, "applicationHost.xdt"));
 
-                transform?.Apply(source);
+                transformMain?.Apply(source);
+
+                var transformScm = CreateXmlTransformation(Path.Combine(directory, "scmApplicationHost.xdt"));
+
+                transformScm?.Apply(source);
             }
 
             return source.ToFormattedString();
@@ -140,16 +144,17 @@ namespace IISManager.Models
         private static XmlTransformation CreateXmlTransformation(string xdtPath, string xdtContent)
         {
             // Looks like ~1mysite__cb96 (the __cb96 syntax occurs when using slots)
-            string scmSiteName = Environment.GetEnvironmentVariable("WEBSITE_IIS_SITE_NAME");
+            var scmSiteName = Environment.GetEnvironmentVariable("WEBSITE_IIS_SITE_NAME");
 
             // Remove the ~1 prefix to get the main site name, e.g. mysite__cb96
             // Note that %WEBSITE_SITE_NAME% is not correct is it would be just mysite, without the __cb96 suffix
-            string mainSiteName = scmSiteName.Substring(2);
+            var mainSiteName = scmSiteName.Substring(2);
 
             xdtContent = xdtContent.Replace("%XDT_SITENAME%", mainSiteName);
             xdtContent = xdtContent.Replace("%XDT_SCMSITENAME%", scmSiteName);
             xdtContent = xdtContent.Replace("%XDT_APPPOOLNAME%", Environment.GetEnvironmentVariable("APP_POOL_ID"));
             xdtContent = xdtContent.Replace("%XDT_EXTENSIONPATH%", Path.GetDirectoryName(xdtPath));
+            xdtContent = xdtContent.Replace("%XDT_BITNESS%", Environment.GetEnvironmentVariable("SITE_BITNESS"));
             xdtContent = xdtContent.Replace("%HOME%", Environment.GetEnvironmentVariable("HOME"));
 
             return new XmlTransformation(xdtContent, false, null);
