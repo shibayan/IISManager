@@ -1,19 +1,86 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- master
+  branches:
+    include:
+    - master
+  tags:
+    include:
+    - v*
 
-pool:
-  vmImage: 'ubuntu-latest'
+variables:
+  isGitHubTag: $[startsWith(variables['Build.SourceBranch'], 'refs/tags/v')]
+  buildConfiguration: 'Release'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
+- stage: Build
+  jobs:
+  - job: Test_Build
+    condition: not(startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+    - task: NuGetCommand@2
+      inputs:
+        command: 'restore'
+        restoreSolution: '**/*.sln'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    - task: MSBuild@1
+      inputs:
+        solution: '**/*.csproj'
+        configuration: '$(buildConfiguration)'
+
+  - job: Build_Nupkg
+    condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+    - powershell: 'echo "##vso[task.setvariable variable=PackageVersion]$($env:Build_SourceBranchName.Substring(1))"'
+      displayName: 'PowerShell Script'
+
+    - task: NuGetCommand@2
+      inputs:
+        command: 'restore'
+        restoreSolution: '**/*.sln'
+
+    - task: MSBuild@1
+      inputs:
+        solution: '**/*.csproj'
+        configuration: '$(buildConfiguration)'
+        msbuildArguments: '/t:pipelinePreDeployCopyAllFilesToOneFolder /p:_PackageTempDir="..\..\build";AutoParameterizationWebConfigConnectionStrings=false;SolutionDir="src\"'
+
+    - task: NuGetCommand@2
+      inputs:
+        command: 'pack'
+        packagesToPack: './IISManager.nuspec'
+        packDestination: '$(System.DefaultWorkingDirectory)/artifacts'
+        versioningScheme: byEnvVar
+        versionEnvVar: PackageVersion
+        basePath: './build'
+        verbosityPack: 'Normal'
+
+    - publish: artifacts
+      artifact: nupkg
+      displayName: 'Publish artifacts'
+
+- stage: Publish
+  dependsOn:
+  - Build
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+  jobs:
+  - job: Publish_Nupkg
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+    - checkout: none
+
+    - download: current
+      artifact: nupkg
+      displayName: 'Download artifact'
+
+    - task: NuGetCommand@2
+      displayName: 'NuGet push'
+      inputs:
+        command: push
+        packagesToPush: '$(Pipeline.Workspace)/**/*.nupkg'
+        nuGetFeedType: external
+        publishFeedCredentials: NuGet
+        verbosityPush: Normal
